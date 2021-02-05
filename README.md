@@ -15,10 +15,10 @@ ShellScript tools to deploy VM cloud-init in Proxmox Virtual Environment (PVE)
 - Ubuntu Server 20.04 LTS - Focal
 2. Set VM Hostname
 3. Set VM Description
-4. Memory (Available choose 2GB,4GB,8GB and 16GB)
+4. Memory (Available to select 2GB,4GB,8GB and 16GB)
 5. CPU Cores
 6. CPU Sockets
-7. Storage path (Local, NFS, LVM/LVM-Thin, etc)
+7. Storage destination (Local, NFS, LVM/LVM-Thin, etc)
 8. Define user, by default root user is defined. If you change to another, this user can be used with sudo powers without password;
 9. Insert SSH authorized keys to user defined on step 8 **Very important**;
 10. Select bridge network;
