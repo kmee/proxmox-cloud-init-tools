@@ -30,7 +30,7 @@ PVE 6.3 **[OK] - Tested**
 13. Can start or not, VM after deployment.
 
 ### Usage
-1. Login on your Proxmox VE server
+1. Login on your Proxmox VE server over SSH or Console Shell
 2. Clone proxmox-cloud-init project
 > git clone https://github.com/kmee/proxmox-cloud-init-tools.git
 
