@@ -3,8 +3,11 @@ Shellscipt tools to manage VM cloud-init in Proxmox Virtual Environment (PVE)
 
 ### Supported PVE Versions
 PVE 6 *Not tested*
+
 PVE 6.1 **[OK] - Tested**
+
 PVE 6.2 **[OK] - Tested**
+
 PVE 6.3 **[OK] - Tested**
 
 ### Features
