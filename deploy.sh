@@ -1,4 +1,15 @@
 #!/bin/bash
+
+############################################################################
+#title           :proxmox-cloud-init-tools
+#description     :This script will deploy Cloud-init images on Proxmox VE.
+#author		 :Ananias Filho aka kram3r
+#date            :2021-02-05
+#version         :0.9
+#usage		 :bash deploy.sh
+#bash_version    :GNU bash, versão 5.0.17(1)-release (x86_64-pc-linux-gnu)
+############################################################################
+
 clear
 ### SSH KEY PATH check
 if [ ! -f pub_keys/id_rsa.pub ]; then
