@@ -1,5 +1,5 @@
 # Proxmox cloud-init tools
-Shellscipt tools to manage VM cloud-init in Proxmox Virtual Environment (PVE)
+ShellScript tools to manage VM cloud-init in Proxmox Virtual Environment (PVE)
 
 ### Supported PVE Versions
 PVE 6 *Not tested*
