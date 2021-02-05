@@ -1,5 +1,12 @@
 #!/bin/bash
 clear
+### SSH KEY PATH check
+if [ ! -f pub_keys/id_rsa.pub ]; then
+	echo "Public ssh keys file not fount!"
+	echo "Create ./pub_keys/id_rsa.pub file, then paste your public ssh key file (id_rsa.pub)"
+	echo "Script finished"
+	exit
+fi
 # IMAGE PATH
 IMG_PATH="imgs"
 ### Check if imgs path exist
@@ -53,6 +60,8 @@ case $OPT_IMAGE_TEMPLATE in
 		exit
 		;;
 esac
+clear
+echo "########## VM DETAILS ##########"
 
 echo -n "Type VM Name: "
 read TEMPLATE_VM_NAME
@@ -95,20 +104,30 @@ read TEMPLATE_VM_CORES
 ### VM Sockets
 echo -n "Type # of VM CPU Sockets: (Example: 1)"
 read TEMPLATE_VM_SOCKETS
+
+### VM Storage
+clear
+echo "########## NETWORK ##########"
+echo ""
+echo Storage Availability|awk '{ printf "%-20s %-40s\n", $1, $2 }'
+pvesm status|grep active|awk '{ printf "%-20s %-40s\n", $1, $7 }'
+echo -n "Type name of Storage to install VM: "
+read TEMPLATE_VM_STORAGE
+
+### VM Default user
+clear
+echo "######### USER INFORMATION ##########"
+echo "Script create user root as default. If you would like to change it and use sudo, please"
+echo -n "type new username: "
+read TEMPLATE_DEFAULT_USER
+#### Network
+clear
+echo "########## NETWORK ##########"
 ### Bridge
 echo "Choose a Bridge interface to attach VM, options are:"
 brctl show|grep vmbr|awk '{print "Bridge " $1}'|sort|uniq
 echo -n "Type brigde name: (Example vmbr0) "
 read TEMPLATE_VM_BRIDGE
-### VM Storage
-echo Storage Availability|awk '{ printf "%-20s %-40s\n", $1, $2 }'
-pvesm status|grep active|awk '{ printf "%-20s %-40s\n", $1, $7 }'
-echo -n "Type name of Storage to install VM: "
-read TEMPLATE_VM_STORAGE
-### VM Default user
-echo "Script create user root as default. If you would like to change it and use sudo, please"
-echo -n "type new username: "
-read TEMPLATE_DEFAULT_USER
 ### VM IP
 echo -n "Type VM IP Address and Network Mask bit. (Example: 192.168.0.101/24): "
 read TEMPLATE_VM_IP
@@ -124,20 +143,20 @@ clear
 echo ""
 echo "######### VM DETAILS ##########"
 echo ""
-echo TEMPLATE_VM_NAME $TEMPLATE_VM_NAME 
-echo TEMPLATE_VM_DESCRIPTION $TEMPLATE_VM_DESCRIPTION 
-echo TEMPLATE_VM_MEMORY $TEMPLATE_VM_MEMORY 
-echo TEMPLATE_VM_CORES $TEMPLATE_VM_CORES
-echo TEMPLATE_VM_SOCKETS $TEMPLATE_VM_SOCKETS
-echo TEMPLATE_VM_BRIDGE $TEMPLATE_VM_BRIDGE
-echo TEMPLATE_VM_ID $TEMPLATE_VM_ID
-echo TEMPLATE_VM_CI_IMAGE $TEMPLATE_VM_CI_IMAGE
-echo TEMPLATE_VM_STORAGE $TEMPLATE_VM_STORAGE
-echo TEMPLATE_DEFAULT_USER $TEMPLATE_DEFAULT_USER
-echo TEMPLATE_VM_IP $TEMPLATE_VM_IP
-echo TEMPLATE_VM_GW $TEMPLATE_VM_GW
+echo Name: $TEMPLATE_VM_NAME 
+echo Description $TEMPLATE_VM_DESCRIPTION 
+echo Memory:  $TEMPLATE_VM_MEMORY 
+echo Cores: $TEMPLATE_VM_CORES
+echo Sockets: $TEMPLATE_VM_SOCKETS
+echo Template Image: $TEMPLATE_VM_CI_IMAGE
+echo Storage: $TEMPLATE_VM_STORAGE
+echo User: $TEMPLATE_DEFAULT_USER
+echo Attached Bridge: $TEMPLATE_VM_BRIDGE
+echo IP Address/Network: $TEMPLATE_VM_IP
+echo Gateway $TEMPLATE_VM_GW
+echo VM ID: $TEMPLATE_VM_ID
 
-echo -n " Review informantions and type Y to continue: "
+echo -n "Review informantions and type Y to continue: "
 read OPT_CONTINUE
 if [ $OPT_CONTINUE != "Y" ] ; then
 	echo "Script finished"
