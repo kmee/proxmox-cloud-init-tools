@@ -48,5 +48,5 @@ PVE 6.3 **[OK] - Tested**
 5. Follow instructions on screen.
 
 ### Important
-Before deploy you VM using things script, upload your public ssh key to ./pub_keys/id_rsa.pub file.
+Before deploy VM using things script, upload your public ssh key to ./pub_keys/id_rsa.pub file.
 if you do not upload keys do pub_keys/id_rsa.pub, you will not access VM.
