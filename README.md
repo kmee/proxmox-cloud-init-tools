@@ -33,13 +33,17 @@ PVE 6.3 **[OK] - Tested**
 1. Login on your Proxmox VE server
 2. Clone proxmox-cloud-init project
 > git clone https://github.com/kmee/proxmox-cloud-init-tools.git
+
 > cd proxmox-cloud-init-tools
 3. Create authorized keys files
 > mkdir pub_keys
+
 > touch pub_keys/id_rsa.pub
+
 > copy your public ssh keys to pub/keys/id_rsa.pub file
 4. Adjust permission, then run deploy.sh
 > chmod +x deploy.sh
+
 > ./deploy.sh
 5. Follow instructions on screen.
 
