@@ -29,13 +29,15 @@ DEBIAN_10_URL="https://cdimage.debian.org/cdimage/openstack/current-10/debian-10
 DEBIAN_9_URL="https://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.raw"
 UBUNTU_1804_URL="https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img"
 UBUNTU_2004_URL="https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img"
-
+OPENSUSE_152_URL="https://download.opensuse.org/repositories/Cloud:/Images:/Leap_15.2/images/openSUSE-Leap-15.2-OpenStack.x86_64.qcow2"
+####
 echo "Available images are: "
 echo -n "
 1 - Debian 9 - Stretch
 2 - Debian 10 - Buster
 3 - Ubuntu 18.04 LTS - Bionic
 4 - Ubuntu 20.04 LTS - Focal
+5 - OpenSUSE LEAP 15.02
 "
 echo -n "Choose a Image template to install: "
 read OPT_IMAGE_TEMPLATE
@@ -63,6 +65,12 @@ case $OPT_IMAGE_TEMPLATE in
 		TEMPLATE_VM_CI_IMAGE="$IMG_PATH/${UBUNTU_2004_URL##*/}"
 		if [ ! -f $TEMPLATE_VM_CI_IMAGE ]; then
 			wget -c $UBUNTU_2004_URL -O $TEMPLATE_VM_CI_IMAGE
+		fi
+		;;
+	5)
+		TEMPLATE_VM_CI_IMAGE="$IMG_PATH/${OPENSUSE_152_URL##*/}"
+		if [ ! -f $TEMPLATE_VM_CI_IMAGE ]; then
+			wget -c $OPENSUSE_152_URL -O $TEMPLATE_VM_CI_IMAGE
 		fi
 		;;
 	*)
