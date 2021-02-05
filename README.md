@@ -2,9 +2,10 @@
 Shellscipt tools to manage VM cloud-init in Proxmox Virtual Environment (PVE)
 
 ### Supported PVE Versions
-1. 6.1
-2. 6.2
-3. 6.3
+PVE 6 *Not tested*
+PVE 6.1 **[OK] - Tested**
+PVE 6.2 **[OK] - Tested**
+PVE 6.3 **[OK] - Tested**
 
 ### Features
 1. Auto cloud images download
@@ -19,7 +20,7 @@ Shellscipt tools to manage VM cloud-init in Proxmox Virtual Environment (PVE)
 6. CPU Sockets
 7. Storage path (Local, NFS, LVM/LVM-Thin, etc)
 8. Define user, by default root user is defined. If you change to another, this user can be used with sudo powers without password;
-9. Insert SSH authorized keys to user defined on step 8;
+9. Insert SSH authorized keys to user defined on step 8 **Very important**;
 10. Select bridge network;
 11. Select Static/IP or DHCP usage;
 12. Define uniq VMID;
