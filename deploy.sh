@@ -65,31 +65,33 @@ echo "########## VM DETAILS ##########"
 
 echo -n "Type VM Name: "
 read TEMPLATE_VM_NAME
+echo
 echo -n "Type VM Description: "
 read TEMPLATE_VM_DESCRIPTION
+echo
 echo -n "Memory Options:
-a - 1GB
-b - 2GB
-c - 4GB
-d - 8GB
-e - 16GB
-Select VM Memory option (a-e): "
+1 - 1GB
+2 - 2GB
+3 - 4GB
+4 - 8GB
+5 - 16GB
+Select VM Memory option (1-5): "
 read TEMPLATE_VM_MEMORY_GB
 
 case $TEMPLATE_VM_MEMORY_GB in
-	a)
+	1)
 	TEMPLATE_VM_MEMORY=1024
 	;;
-	b)
+	2)
 		TEMPLATE_VM_MEMORY=2048
 	;;
-	c)
+	3)
 		TEMPLATE_VM_MEMORY=4096
 	;;
-	d)
+	4)
 		TEMPLATE_VM_MEMORY=8192
 	;;
-	e)
+	5)
 		TEMPLATE_VM_MEMORY=16384
 	;;
         *)
@@ -107,7 +109,7 @@ read TEMPLATE_VM_SOCKETS
 
 ### VM Storage
 clear
-echo "########## NETWORK ##########"
+echo "########## STORAGE ##########"
 echo ""
 echo Storage Availability|awk '{ printf "%-20s %-40s\n", $1, $2 }'
 pvesm status|grep active|awk '{ printf "%-20s %-40s\n", $1, $7 }'
@@ -117,23 +119,51 @@ read TEMPLATE_VM_STORAGE
 ### VM Default user
 clear
 echo "######### USER INFORMATION ##########"
-echo "Script create user root as default. If you would like to change it and use sudo, please"
+echo "This tool create user root as default!"
+echo "If you would like to use non-root account, please define username and use sudo when login."
+echo "If you will use root, just type root or keep it empty."
 echo -n "type new username: "
 read TEMPLATE_DEFAULT_USER
+# Check username - then define as root if empty
+if [ -z $TEMPLATE_DEFAULT_USERNAME ] ; then
+	TEMPLATE_DEFAULT_USERNAME="root"
+fi
 #### Network
 clear
 echo "########## NETWORK ##########"
 ### Bridge
 echo "Choose a Bridge interface to attach VM, options are:"
-brctl show|grep vmbr|awk '{print "Bridge " $1}'|sort|uniq
+	### Get all bridges and their networks
+	echo "BRIDGE NETWORK"|awk '{ printf "%-20s %-40s\n", $1, $2 }'
+	for BRIDGES in `ifconfig |grep vmbr|awk '{print $1}'|cut -d":" -f1` ; do
+	        BRIDGE_NETWORK=`ip a show $BRIDGES|grep "inet "|awk '{print $2}'`
+	        echo "$BRIDGES $BRIDGE_NETWORK"|awk '{ printf "%-20s %-40s\n", $1, $2 }'
+	done
+
 echo -n "Type brigde name: (Example vmbr0) "
 read TEMPLATE_VM_BRIDGE
-### VM IP
-echo -n "Type VM IP Address and Network Mask bit. (Example: 192.168.0.101/24): "
-read TEMPLATE_VM_IP
-### VM GW
-echo -n "Type Network Gateway IP Address. (Example: 192.168.0.1): "
-read TEMPLATE_VM_GW
+
+echo "Use DHCP?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) DHCP_USE="Y"; break;;
+        No ) echo "";;
+    esac
+done
+if [ $DHCP_USE != "Y" ] ;then
+	### VM IP
+	echo -n "Type VM IP Address (Example: 192.168.0.101): "
+	read TEMPLATE_VM_IP_ADDR
+	### VM IP
+	echo -n "Type VM IP BIT MASK. Example: 24, 22, 16, 8 etc." 
+	echo -n "Your network bit mask: "
+	read TEMPLATE_VM_IP_NETMASK
+	TEMPLATE_VM_IP="$TEMPLATE_VM_IP_ADDR/$TEMPLATE_VM_IP_NETMASK"
+	### VM GW
+	echo -n "Type Network Gateway IP Address. (Example: 192.168.0.1): "
+	read TEMPLATE_VM_GW
+fi
+### VM TEMPLATE ID
 echo "Choose a UNIQ ID for VM, please, do not use any of bellow IDs"
 pvesh get /cluster/resources --type vm|grep qemu|awk '{ print $2}'|cut -d"/" -f2
 echo -n "Type a uniq ID for VM: "
@@ -156,12 +186,15 @@ echo IP Address/Network: $TEMPLATE_VM_IP
 echo Gateway $TEMPLATE_VM_GW
 echo VM ID: $TEMPLATE_VM_ID
 
-echo -n "Review informantions and type Y to continue: "
-read OPT_CONTINUE
-if [ $OPT_CONTINUE != "Y" ] ; then
-	echo "Script finished"
-	exit
-fi
+
+echo "Review VM informations and continue"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) echo "Starting deploy"; break;;
+        No ) exit;;
+    esac
+done
+
 #### Start deploy
 echo ""
 echo "##########  Start  VM  Deploy  ##########"
@@ -245,9 +278,29 @@ qm set $TEMPLATE_VM_ID --ide2 local:cloudinit > /dev/null 2>&1
 check_errors
 
 ACTION="Set authorized ssh keys"
-qm set $TEMPLATE_VM_ID --sshkey /root/cloud-init/pub_keys/id_rsa.pub > /dev/null 2>&1
+qm set $TEMPLATE_VM_ID --sshkey ./pub_keys/id_rsa.pub > /dev/null 2>&1
 check_errors
 
 ACTION="Set IP Address and Gateway"
-qm set $TEMPLATE_VM_ID --ipconfig0 ip=$TEMPLATE_VM_IP,gw=$TEMPLATE_VM_GW > /dev/null 2>&1
+if [ $DHCP_USE == Y ] ; then
+	qm set $TEMPLATE_VM_ID --ipconfig0 ip=dhcp > /dev/null 2>&1
+else
+	qm set $TEMPLATE_VM_ID --ipconfig0 ip=$TEMPLATE_VM_IP,gw=$TEMPLATE_VM_GW > /dev/null 2>&1
+fi
 check_errors
+
+clear
+echo "########## Finishing deployment"
+echo ""
+echo "Do you wish to start this VM now?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) qm start $TEMPLATE_VM_ID; break;;
+        No ) exit;;
+    esac
+done
+
+echo "Now, if VM is up and running, try access $TEMPLATE_DEFAULT_USER@$TEMPLATE_VM_IP_ADDR - or check your VM ip address on DHCP Server."
+echo ""
+echo "Finished"
+echo ""
