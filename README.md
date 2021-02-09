@@ -59,5 +59,6 @@ Before deploy VM using things script, upload your public ssh key to ./pub_keys/i
 if you do not upload keys do pub_keys/id_rsa.pub, you will not access VM.
 
 ### Contributors
-Ananias Filho @ananiasfilho
+Ananias Filho - @ananiasfilho
+
 Frederico Siena 
