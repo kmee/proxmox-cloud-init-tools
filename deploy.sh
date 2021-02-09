@@ -22,8 +22,9 @@ fi
 IMG_PATH="imgs"
 ### Check if imgs path exist
 if [ ! -d $IMG_PATH ] ; then
-	mkdir -p IMG_PATH
+	mkdir -p $IMG_PATH
 fi
+
 #URLS - Available compatible cloud-init images to download - Debina 9/10 and Ubuntu 18.04/20.04
 DEBIAN_10_URL="https://cdimage.debian.org/cdimage/openstack/current-10/debian-10-openstack-amd64.raw"
 DEBIAN_9_URL="https://cdimage.debian.org/cdimage/openstack/current-9/debian-9-openstack-amd64.raw"
@@ -293,7 +294,7 @@ check_errors
 
 #Cloud INIT
 ACTION="Add cloud-init cdrom"
-qm set $TEMPLATE_VM_ID --ide2 local:cloudinit > /dev/null 2>&1
+qm set $TEMPLATE_VM_ID --ide2 $TEMPLATE_VM_STORAGE:cloudinit > /dev/null 2>&1
 check_errors
 
 ACTION="Set authorized ssh keys"
